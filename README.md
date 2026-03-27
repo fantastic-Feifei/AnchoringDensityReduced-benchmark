@@ -1,107 +1,142 @@
-<!--
- * @Author: fantastic_feifei feifei.sun@jaist.ac.jp
- * @Date: 2025-05-18 02:21:24
- * @LastEditors: fantastic_feifei feifei.sun@jaist.ac.jp
- * @LastEditTime: 2025-05-18 03:05:40
- * @FilePath: \MTS-benchmark\README.md
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
--->
 # MTS-benchmark
-This repository contains the dataset for the study of Mixed-Time Temporal Reasoning.
 
-Contains 3 datasets files for evaluating large language models (LLMs) on sentence-level temporal reasoning:
+This repository provides a **controlled temporal reasoning dataset** for studying how large language models (LLMs) perform under **mixed temporal information conditions**.
 
-- `MT_shuffled.csv`: Mixed-time setting. Some absolute time expressions are rewritten into relative expressions using a GPT-based rewriting strategy.
-- `AT_shuffled_cleaned.csv`: Absolute-time setting. Events are ordered by their original timestamps without modification.
-- `conversion_table.csv`: Conversion Table. Provides a list of time expression rewrites extracted from the `MT_shuffled.csv` dataset. 
-                          - It maps absolute time expressions to their corresponding GPT-generated relative or descriptive alternatives. 
-                          - This table can be used as a reference for studying time expression rewriting, paraphrasing, or time grounding in temporal reasoning tasks.
-  
-Each file contains passages extracted from Wikipedia biographies, with gold-standard sentence order annotations and corresponding model inputs.
+Unlike existing benchmarks that rely on fully explicit timestamps, this dataset **systematically manipulates temporal anchoring density** while preserving identical event structures.  
+This enables controlled evaluation of how temporal information availability affects chronological reasoning.
+
+---
+
+## 🔍 Key Features
+
+- **Controlled anchoring density**  
+  Temporal expressions are systematically reduced or rewritten to simulate realistic, heterogeneous time conditions.
+
+- **Paired data design**  
+  Each narrative has:
+  - an **Absolute-Time (AT)** version (fully anchored)
+  - a **Mixed-Time (MT)** version (partially de-anchored)  
+  → with **identical events and gold chronological order**
+
+- **Sentence-level event ordering task**  
+  Each sentence corresponds to one event, and models must recover the correct temporal sequence.
+
+- **Reproducible rewriting rules**  
+  Time expression transformations follow deterministic rules with optional GPT-based augmentation.
+
+---
+
+## 📂 Dataset Files
+
+The repository contains three main files:
+
+- `MT_shuffled.csv`  
+  Mixed-time setting. A subset of absolute time expressions is rewritten into relative or contextual expressions.
+
+- `AT_shuffled_cleaned.csv`  
+  Absolute-time setting. All events retain explicit timestamps.
+
+- `conversion_table.csv`  
+  A reference table mapping absolute time expressions to their rewritten forms.
+
+Each dataset consists of biographical passages derived from Wikipedia, annotated with **gold-standard chronological order**.
+
+---
+
+## 🧠 Dataset Design
+
+### Event Structure
+
+Each passage is decomposed into a sequence of event sentences:
+
+- One sentence = one event  
+- A gold chronological order is provided  
+- Input is a **shuffled sequence**, requiring reconstruction
+
+---
+
+### Anchoring Density (D)
+
+Anchoring density is defined as:
+
+> the proportion of events associated with explicit temporal expressions
+
+- **AT setting** → high density (fully anchored)  
+- **MT setting** → reduced density (partial rewriting)
+
+This allows **controlled analysis of temporal constraint availability**.
+
+---
+
+### Why This Dataset Matters
+
+This dataset enables:
+
+- **Isolation of temporal information effects**  
+  Changes in performance can be attributed to temporal structure, not content differences
+
+- **Controlled robustness evaluation**  
+  Models are tested under progressively weaker temporal constraints
+
+- **Causal-style analysis**  
+  By keeping event content fixed, we directly measure how anchoring affects reasoning stability
+
+---
 
 ## 📑 Column Descriptions
 
-Below are the descriptions of each column included in the released `.csv` files (`MT_shuffled.csv` and `AT_shuffled.csv`):
+### Common Columns (`MT_shuffled.csv` & `AT_shuffled_cleaned.csv`)
 
-| Column Name                         | Description |
-|------------------------------------|-------------|
-| `Wikidata ID`                      | The unique identifier of the entity on Wikidata (e.g., Q937). |
-| `Name`                             | The full name of the person described in the passage. |
-| `Professions`                      | The profession(s) associated with the person, as retrieved from Wikidata. |
-| `Wikipedia Title`                  | The title of the Wikipedia page where the biographical text was sourced. |
-| `pageContent`                      | The original passage, composed of biographical event sentences extracted from Wikipedia. |
-| `clean text`                       | A cleaned version of `pageContent`, with preprocessed formatting and sentence segmentation. |
-| `gold answer`                      | The gold chronological order of the sentences (e.g., `0 1 2 3`), used for evaluation. |
-| `event_count`                      | The number of event sentences in the passage (e.g., 4 or 10), used for data grouping and analysis. |
+| Column Name | Description |
+|------------|------------|
+| `Wikidata ID` | Unique identifier from Wikidata |
+| `Name` | Person name |
+| `Professions` | Occupation(s) |
+| `Wikipedia Title` | Source page |
+| `pageContent` | Original extracted passage |
+| `clean text` | Preprocessed and segmented text |
+| `gold answer` | Correct chronological order (e.g., `0 1 2 3`) |
+| `event_count` | Number of events |
 
-### Columns specific to `MT_shuffled.csv`:
+---
 
-| Column Name                         | Description |
-|------------------------------------|-------------|
-| `Gpt Modified Context`             | The version of the passage in which some absolute time expressions are rewritten into relative expressions using GPT (e.g., “in 1945” → “at the end of World War II”). |
-| `Replacement Information`          | Metadata describing which time expressions were replaced and how. Useful for understanding the transformation process. |
-| `Shuffled Gpt Modified Context`    | A shuffled version of the modified passage used as the actual model input for temporal ordering tasks. |
-| `Shuffle Mapping`                  | A mapping from the shuffled sentence indices to the original order, used to calculate evaluation metrics. |
+### Additional Columns in `MT_shuffled.csv`
 
-### Columns specific to `AT_shuffled.csv`:
+| Column Name | Description |
+|------------|------------|
+| `Gpt Modified Context` | Passage with rewritten temporal expressions |
+| `Replacement Information` | Details of applied rewrites |
+| `Shuffled Gpt Modified Context` | Shuffled input for model evaluation |
+| `Shuffle Mapping` | Mapping to original order |
 
-| Column Name                         | Description |
-|------------------------------------|-------------|
-| `Shuffled gold answer`             | The `clean text` passage with its sentences randomly shuffled for model input. |
-| `Shuffle Mapping gold answer`      | A mapping from the shuffled indices to the original gold order for use in evaluation. |
+---
 
+### Additional Columns in `AT_shuffled_cleaned.csv`
 
-### Columns in `conversion_table_fully_cleaned.csv`:
+| Column Name | Description |
+|------------|------------|
+| `Shuffled gold answer` | Shuffled version of the original passage |
+| `Shuffle Mapping gold answer` | Mapping for evaluation |
 
-| Column Name     | Description |
-|------------------|-------------|
-| `Original Time`  | The original absolute time expression (e.g., `1945`, `March 2002`, `1990 to 1995`). |
-| `Rewritten Time` | The rewritten or paraphrased version generated by GPT (e.g., `the end of World War II`, `over a decade ago`). |
+---
 
+### Conversion Table
 
-## Rule Design for Absolute-to-Relative Time Conversion
+| Column Name | Description |
+|------------|------------|
+| `Original Time` | Original absolute expression |
+| `Rewritten Time` | Rewritten version |
 
-To ensure **reproducibility**, we defined a set of deterministic rewriting rules for converting absolute temporal expressions (e.g., `1970`, `Oct. 2, 2003`) into relative or contextualized forms (e.g., `early 1970s`, `early October 2003`).
+---
 
-The conversion process follows **three main principles**:
+## 🔧 Time Conversion Rules
+
+To ensure reproducibility, we apply structured rewriting strategies:
 
 ### 1. Granularity Preservation
-The relative expression maintains the same level of temporal precision as the original  
-(e.g., year → decade-level, date → month-level).
 
-**Examples**
+Maintain temporal resolution:
+
 ```text
 1970 → early 1970s  
 Oct. 2, 2003 → early October 2003
-```
-
-### 2. Approximate and Contextual Rewriting
-
-For historical years, we replaced numeric values with approximate relative phrases based on their distance from the reference year (assumed as 2023).
-
-**Examples**
-```text
-1976 (≈ 47 years before 2023) → a little over four decades ago
-1993 (≈ 30 years before 2023) → approximately three decades back
-```
-
-### 3. Event-Sequence Grounding
-
-When absolute time appears within a local narrative context, we converted it to relative phrasing anchored to surrounding events (e.g., “the following year,” “shortly after,” “soon after”).
-
-**Examples**
-```text
-2004 (following a 2003 event) → the following year
-Feb. 1, 2004 (after Jan. 28, 2004) → shortly after
-```
-
-Each rule type (decade-level, approximate distance, contextual sequence) was implemented using a small Python script that maps numeric years/dates to corresponding phrase templates.
-
-### ⚠️ Known Limitations
-
-While most rewritten expressions are semantically meaningful and contextually grounded, **not all rewrites are globally valid**:
-
-- ✅ Some expressions (e.g., `1945 → the end of World War II`) are historically anchored and widely interpretable.
-- ⚠️ Others (e.g., `1945 → three years ago`) are context-dependent and only make sense relative to the document’s internal timeline.
-
-> 📌 Please refer to the original passage (`Gpt Modified Context`) in `MT_shuffled.csv` when using these rewrites for downstream tasks such as generation, normalization, or alignment.
