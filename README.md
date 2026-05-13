@@ -106,7 +106,7 @@ This benchmark enables:
 
 # 📑 Column Descriptions
 
-## Common Columns (`MC_shuffled.csv` & `AT_shuffled_cleaned.csv`)
+## Common Columns (`MC_shuffled.csv` & `AT_shuffled.csv`)
 
 | Column Name | Description |
 |---|---|
@@ -132,7 +132,7 @@ This benchmark enables:
 
 ---
 
-## Additional Columns in `AT_shuffled_cleaned.csv`
+## Additional Columns in `AT_shuffled.csv`
 
 | Column Name | Description |
 |---|---|
