@@ -51,10 +51,10 @@ This design enables systematic robustness analysis under varying temporal ground
 
 The repository contains three main files:
 
-- `DR_shuffled.csv`  
+- `MC_shuffled.csv`  
   Density-Reduced setting. A subset of explicit temporal expressions is rewritten into relative or contextual temporal expressions.
 
-- `ET_shuffled_cleaned.csv`  
+- `AT_shuffled_cleaned.csv`  
   Explicit-Time setting. All events retain explicit calendar-based timestamps.
 
 - `conversion_table.csv`  
@@ -106,7 +106,7 @@ This benchmark enables:
 
 # 📑 Column Descriptions
 
-## Common Columns (`DR_shuffled.csv` & `ET_shuffled_cleaned.csv`)
+## Common Columns (`MC_shuffled.csv` & `AT_shuffled_cleaned.csv`)
 
 | Column Name | Description |
 |---|---|
@@ -121,7 +121,7 @@ This benchmark enables:
 
 ---
 
-## Additional Columns in `DR_shuffled.csv`
+## Additional Columns in `MC_shuffled.csv`
 
 | Column Name | Description |
 |---|---|
@@ -132,7 +132,7 @@ This benchmark enables:
 
 ---
 
-## Additional Columns in `ET_shuffled_cleaned.csv`
+## Additional Columns in `AT_shuffled_cleaned.csv`
 
 | Column Name | Description |
 |---|---|
